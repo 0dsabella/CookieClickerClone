@@ -1,3 +1,3 @@
 # CookieClickerClone
 
-This is a clone of the famous Cookie CLicker game.
+This is a clone of the famous Cookie Clicker game.
