@@ -14,13 +14,14 @@ formatting = """
     BoxLayout:
         orientation: 'vertical'
         Label:
+            color: [1,0,0,1]
             text: root.instructions  
             font_size: 40 
         TextInput:
             id: save_code
             font_size: 28
         Button:
-            text: 'Press me to go to the Game Screen'
+            text: 'Click Here to Continue'
             on_press: root.load_or_start_new(save_code.text)
 <CreateNewCharacterScreen>:
     name: 'character'
@@ -34,7 +35,7 @@ formatting = """
             id: name
             font_size: 28
         Button:
-            text: 'Enter a name for your character'
+            text: 'Enter Name Here'
             on_press: root.create_character(name.text)
 <MainGameScreen>:
     name: 'game'
@@ -45,28 +46,26 @@ formatting = """
             text: root.display
         BoxLayout:
             Button:
-                text: 'Read a Book'
-                on_press: root.read_a_book()
-                on_press: root.add_time(25)   
+                text: 'Rob'
+                on_press: root.rob()
+                on_press: root.add_rep(-15)   
             Button:
-                text: 'Workout'
-                on_press: root.workout() 
-                on_press: root.add_time(15)            
+                text: 'Work'
+                on_press: root.work() 
+                on_press: root.add_rep(3)            
 """
 Builder.load_string(formatting)
 class PlayerStatistics:
-    def __init__(self, strength=0, wisdom=0, time=0):
-        self.time: int = time
+    def __init__(self, COINS=0):
         self.name: str = ""
-        self.strength: int = strength
-        self.wisdom: int = wisdom
-        self.attributeDict = {"STR": self.strength, "WIS": self.wisdom}
+        self.coins: int = COINS
+        self.attributeDict = {"COINS": self.coins}
     def create_from_save(self):
         pass
     def set_name(self, username):
         self.name = username
-    def increment_Strength(self, amount=1):
-        self.strength = self.strength + amount
+    def increment_Coins(self, amount=1):
+        self.coins = self.coins + amount
     def increment(self, parameter, amount=1):
         if self.attributeDict.__contains__(parameter):
             self.attributeDict[parameter] = self.attributeDict[parameter] + amount
@@ -77,21 +76,18 @@ class PlayerStatistics:
         pass
     def __str__(self):
         return str(
-            "Name: " + self.name + "|" + "time: " + str(self.time)
-            + "\n" + "Strength: " + str(self.strength)
-            + "\n" + "Wisdom: " + str(self.wisdom)
+            "Name: " + self.name + "|" + str(self.rep
+            + "\n" + "Coins: " + str(self.coins)
         )
-    def increment_Time(self, amount=1):
-        self.time = self.time + amount
+    def increment_rep(self, amount=0):
+        self.rep = self.rep + amount
         pass
-# Create the screen manager = sm
+
 class MyScreenManager(ScreenManager, Widget):
     data = ObjectProperty(PlayerStatistics)
 class StartScreen(Screen):
     instructions = StringProperty(str('''
-    Welcome to this fun game!
-    If you're new to the game or you want to start from the beginning just press the button!
-    Otherwise, first paste in your save code, and then press the button to load the game.
+   Welcome to Coin Kings. Do you have what it takes to become a master of money, ruler of riches, director of dough? 
     '''))
     def load_or_start_new(self, savedata=''):
         # For now we always start a new game
@@ -100,7 +96,7 @@ class StartScreen(Screen):
         else:
             self.start_new_game()
         pass
-    # Right now load and new do the same thing, but that might change in the future
+ 
     def load_game(self, data):
         self.manager.current = 'character'
         pass
@@ -110,11 +106,11 @@ class StartScreen(Screen):
     pass
 class CreateNewCharacterScreen(Screen):
     instructions = StringProperty(str('''
-        This world is unlike any world you've known before. Great Things await. But first, you'll need a name...
+        All great kings need a name. What is yours?
         '''))
     fail_instructions = StringProperty(str('''
-        This world is unlike any world you've known before. Great Things await. But first, you'll need a name...
-        FOOLISH MORTAL!!! ENTER A NAME FIRST BEFORE YOU CLICK THE BUTTON. 
+        All great kings need a name. What is yours?
+        I said all great kings need a name. ENTER A NAME
         '''))
     data_stats: PlayerStatistics = ObjectProperty(PlayerStatistics)
     def create_character(self, username):
@@ -130,12 +126,16 @@ class CreateNewCharacterScreen(Screen):
 class MainGameScreen(Screen):
     def get_data(self) -> PlayerStatistics:
         return self.manager.get_screen('character').data_stats
-    display = StringProperty("IF THIS IS SHOWING SOMETHING WENT WRONG")
+    display = StringProperty("error")
     # StringProperty("Name: " + "Dummy" + "\n" + "Strength: " + str(Strength))
-    def money(self):
+    def work(self):
         stats: PlayerStatistics = self.get_data()
-        stats.increment_coins(1)
-        self.display = coin(stats)
+        stats.increment_Coins(1)
+        self.display = str(stats)
+    def rob(self):
+        stats: PlayerStatistics = self.get_data()
+        stats.increment_Coins(1)
+        self.display = str(stats)
 class GUIApp(App):
     def build(self):
         return MyScreenManager()
