@@ -127,7 +127,7 @@ class MainGameScreen(Screen):
     def get_data(self) -> PlayerStatistics:
         return self.manager.get_screen('character').data_stats
     display = StringProperty("error")
-    # StringProperty("Name: " + "Dummy" + "\n" + "Strength: " + str(Strength))
+    # StringProperty("Name: " + "Dummy" + "\n" + "Coins: " + str(Coins))
     def work(self):
         stats: PlayerStatistics = self.get_data()
         stats.increment_Coins(1)
